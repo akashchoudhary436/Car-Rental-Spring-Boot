@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>First-Time Login</title>
+    <title>Login</title>
     <style>	body {
 	    font-family: Arial, sans-serif;
 	    background-color: #f4f4f9;
@@ -53,20 +53,17 @@
 
 	button:hover {
 	    background: #0056b3;
-	} </style>
+	}</style>
 </head>
 <body>
     <div class="form-container">
-        <h2>First-Time Login</h2>
-        <form th:action="@{/first-time-login}" th:method="post">
+        <h2>Login</h2>
+        <form th:action="@{/login}" th:method="post">
             <label for="id">Employee ID:</label>
             <input type="text" id="id" name="id" required>
             
-            <label for="defaultPassword">Default Password:</label>
-            <input type="password" id="defaultPassword" name="defaultPassword" required>
-            
-            <label for="newPassword">New Password:</label>
-            <input type="password" id="newPassword" name="newPassword" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
             
             <button type="submit">Login</button>
         </form>
