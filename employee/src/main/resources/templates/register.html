@@ -99,7 +99,7 @@
             <p th:text="${error}" style="color: red; font-weight: bold;"></p>
         </div>
         
-        <form th:action="@{/register}" method="post">
+        <form id="employeeForm" th:action="@{/register}" method="post" onsubmit="return validateForm()">
             <label for="fullName">Full Name:</label>
             <input type="text" id="fullName" name="fullName" placeholder="Enter your full name" required>
 
@@ -128,6 +128,7 @@
     </div>
 
     <script>
+        // Function to toggle the display of the expiry date field based on account type
         function toggleExpiryDateField() {
             var accountType = document.getElementById("accountType").value;
             var expiryDateField = document.getElementById("expiryDateField");
@@ -138,6 +139,47 @@
                 expiryDateField.style.display = "none";
             }
         }
+
+        // Validation function before form submission
+        function validateForm() {
+            // Validate full name (should contain only letters and spaces)
+            var fullName = document.getElementById("fullName").value;
+            var namePattern = /^[A-Za-z\s]+$/; // only letters and spaces
+            if (!namePattern.test(fullName)) {
+                alert("Full Name should contain only letters and spaces.");
+                return false;
+            }
+
+            // Validate contact number (should be exactly 10 digits)
+            var contactNumber = document.getElementById("contactNumber").value;
+            var contactPattern = /^\d{10}$/; // exactly 10 digits
+            if (!contactPattern.test(contactNumber)) {
+                alert("Contact Number should contain exactly 10 digits.");
+                return false;
+            }
+
+            // Validate date of birth (should be in the past)
+            var dob = new Date(document.getElementById("dob").value);
+            var currentDate = new Date();
+            if (dob >= currentDate) {
+                alert("Date of Birth should be a past date.");
+                return false;
+            }
+
+            // Validate exit date (should be a future date if account type is Temporary)
+            var accountType = document.getElementById("accountType").value;
+            if (accountType === "Temporary") {
+                var exitDate = new Date(document.getElementById("expiryDate").value);
+                if (exitDate <= currentDate) {
+                    alert("Exit Date should be a future date.");
+                    return false;
+                }
+            }
+
+            // If all validations pass, allow form submission
+            return true;
+        }
     </script>
 </body>
+
 </html>
