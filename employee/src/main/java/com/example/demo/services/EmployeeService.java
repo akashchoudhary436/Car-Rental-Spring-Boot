@@ -1,7 +1,6 @@
 package com.example.demo.services;
 
 import java.time.format.DateTimeFormatter;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,46 +10,50 @@ import com.example.demo.repository.EmployeeRepository;
 
 @Service
 public class EmployeeService {
-
     @Autowired
     private EmployeeRepository employeeRepository;
 
-    // Register a new employee and generate default password
-    public Employee registerEmployee(Employee employee) {
-        // Check if email already exists
-        Optional<Employee> existingByEmail = employeeRepository.findByEmail(employee.getEmail());
-        if (existingByEmail.isPresent()) {
-            throw new IllegalArgumentException("Email already exists");
-        }
-
-        // Check if contact number already exists
-        Optional<Employee> existingByContact = employeeRepository.findByContactNumber(employee.getContactNumber());
-        if (existingByContact.isPresent()) {
-            throw new IllegalArgumentException("Contact number already exists");
-        }
-
-        // Generate default password
+    public void registerEmployee(Employee employee) {
         String defaultPassword = generateDefaultPassword(employee);
-        employee.setPassword(defaultPassword);  // No encoding since no Spring Security
-        return employeeRepository.save(employee);
+        employee.setPassword(defaultPassword);
+        employeeRepository.save(employee);
     }
 
-    // Generate default password based on logic
+    public Employee loginEmployee(String emailId, String password) {
+        return employeeRepository.findByEmailId(emailId)
+                .filter(e -> e.getPassword().equals(password))
+                .orElse(null);
+    }
+
+    public Employee loginEmployeeById(Long userId, String password) {
+        return employeeRepository.findById(userId)
+                .filter(e -> e.getPassword().equals(password))
+                .orElse(null);
+    }
+
     private String generateDefaultPassword(Employee employee) {
-        String accountTypeFirstLetter = employee.getAccountType().substring(0, 1).toUpperCase();
-        String dobFormatted = employee.getDateOfBirth().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        String firstLetter = employee.getAccountType().substring(0, 1).toUpperCase();
+        String dobFormatted = employee.getDob().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         int nameLength = employee.getFullName().length();
-        return accountTypeFirstLetter + dobFormatted + nameLength;
+        return firstLetter + dobFormatted + nameLength;
     }
 
-    // Reset password for the employee after first login
     public void resetPassword(Long employeeId, String newPassword) {
-        Optional<Employee> employeeOpt = employeeRepository.findById(employeeId);
-        if (employeeOpt.isPresent()) {
-            Employee employee = employeeOpt.get();
-            employee.setPassword(newPassword); // No encoding since no Spring Security
-            employee.setFirstLogin(false);
-            employeeRepository.save(employee);
-        }
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new IllegalArgumentException("Employee with ID " + employeeId + " not found"));
+
+        employee.setPassword(newPassword);
+        employee.setFirstLogin(false);
+        employeeRepository.save(employee);
+    }
+
+    // Check if the contact number already exists in the database
+    public boolean isContactNumberExist(String contactNumber) {
+        return employeeRepository.existsByContactNumber(contactNumber);
+    }
+
+    // Check if the email ID already exists in the database
+    public boolean isEmailExist(String emailId) {
+        return employeeRepository.existsByEmailId(emailId);
     }
 }
