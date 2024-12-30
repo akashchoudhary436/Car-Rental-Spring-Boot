@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Employee Registration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .exit-date {
+            display: none;
+        }
+        .error-message {
+            color: red;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Employee Registration</h1>
+    <form id="registrationForm">
+        <label for="fullName">Full Name</label>
+        <input type="text" id="fullName" required>
+
+        <label for="dob">Date of Birth</label>
+        <input type="date" id="dob" required>
+
+        <label for="email">Email Address</label>
+        <input type="email" id="email" required>
+        <div id="emailError" class="error-message"></div>
+
+        <label for="contactNumber">Contact Number</label>
+        <input type="text" id="contactNumber" required>
+        <div id="contactError" class="error-message"></div>
+
+        <label for="accountType">Account Type</label>
+        <select id="accountType" required>
+            <option value="">Select</option>
+            <option value="Permanent">Permanent</option>
+            <option value="Temporary">Temporary</option>
+        </select>
+
+        <div class="exit-date" id="exitDateDiv">
+            <label for="exitDate">Exit Date</label>
+            <input type="date" id="exitDate">
+        </div>
+
+        <button type="submit">Register</button>
+        <p id="successMessage" style="color: green; display: none;">Employee registered successfully!</p>
+    </form>
+</div>
+
+<script>
+    // Toggle Exit Date field visibility
+    const accountType = document.getElementById('accountType');
+    const exitDateDiv = document.getElementById('exitDateDiv');
+    const form = document.getElementById('registrationForm');
+
+    accountType.addEventListener('change', function () {
+        if (this.value === 'Temporary') {
+            exitDateDiv.style.display = 'block';
+        } else {
+            exitDateDiv.style.display = 'none';
+        }
+    });
+
+    // Form Validation
+    form.addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevent form from submitting
+
+        // Get values
+        const email = document.getElementById('email').value;
+        const contactNumber = document.getElementById('contactNumber').value;
+
+        // Error message elements
+        const emailError = document.getElementById('emailError');
+        const contactError = document.getElementById('contactError');
+        const successMessage = document.getElementById('successMessage');
+
+        // Validation flags
+        let isValid = true;
+
+        // Email validation regex
+        const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailRegex.test(email)) {
+            emailError.textContent = 'Please enter a valid email address.';
+            isValid = false;
+        } else {
+            emailError.textContent = '';
+        }
+
+        // Contact number validation regex (10 digits only)
+        const contactNumberRegex = /^\d{10}$/;
+        if (!contactNumberRegex.test(contactNumber)) {
+            contactError.textContent = 'Enter Valid Contact Number';
+            isValid = false;
+        } else {
+            contactError.textContent = '';
+        }
+
+        // If all validations pass, show success message
+        if (isValid) {
+            successMessage.style.display = 'block';
+            setTimeout(() => {
+                successMessage.style.display = 'none';
+                form.reset(); // Reset the form
+                exitDateDiv.style.display = 'none'; // Hide exit date field
+            }, 3000);
+        }
+    });
+</script>
+</body>
+</html>
