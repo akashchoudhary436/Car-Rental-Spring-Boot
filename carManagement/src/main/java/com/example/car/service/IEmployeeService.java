@@ -12,4 +12,5 @@ public interface IEmployeeService {
     List<Employee> getAllEmployees();
     Employee updateEmployee(Long employeeId, Employee employee);  
     void deleteEmployee(Long employeeId);  
+    void deactivateExpiredAccounts(); // Add this method
 }

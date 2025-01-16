@@ -75,5 +75,11 @@ public class EmployeeController {
        employeeService.deleteEmployee(employeeId);
        return new ResponseEntity<>("Employee deleted successfully.", HttpStatus.OK);
    }
+   @PostMapping("/test-expiration")
+public ResponseEntity<String> testExpiration() {
+    employeeService.deactivateExpiredAccounts();
+    return ResponseEntity.ok("Expiration check triggered.");
+}
+
    
 }
